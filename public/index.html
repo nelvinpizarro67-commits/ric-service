@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIC SERVICE Taller Mecánico Automotriz - Oruro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!--
+    ==================================================================
+     GUÍA DE ESTE ARCHIVO
+     Busca con Ctrl+F la palabra INICIO o FIN para saltar entre bloques.
+     Estos comentarios aparecen en verde en editores como VS Code.
+    ==================================================================
+
+     PARTE A: DISEÑO (CSS, dentro de la etiqueta style)
+       A1  PALETA DE COLORES ............ aquí cambias los colores de todo el sitio
+       A2  BASE Y TIPOGRAFÍA
+       A3  LOGO
+       A4  BARRA DE NAVEGACIÓN
+       A5  PORTADA
+       A6  TARJETAS DE SERVICIOS
+       A7  SECCIONES: ESTADÍSTICAS, FOTOS, HISTORIA
+       A8  SECCIÓN: POR QUÉ ELEGIRNOS
+       A9  PIE DE PÁGINA
+       A10 PANTALLAS DE CONSULTA, ACCESO Y PANEL
+       A11 FORMULARIOS Y BOTONES
+       A12 MENÚ DEL PANEL
+       A13 VERSIÓN PARA CELULAR
+
+     PARTE B: CONTENIDO (HTML, dentro de body)
+       B1  SITIO PÚBLICO (navegación, portada, servicios, fotos, motivos, pie)
+       B2  PANTALLA: CONSULTAR ESTADO DEL VEHÍCULO
+       B3  PANTALLA: ACCESO DEL PERSONAL
+       B4  PANTALLA: PANEL DE REGISTROS
+
+     PARTE C: FUNCIONAMIENTO (JavaScript, al final)
+       C1  CONFIGURACIÓN (usuario, clave, estados)
+       C2  FORMULARIOS: CLIENTES, DIAGNÓSTICO, HISTORIAL, MECÁNICOS,
+           EMPLEADOS, VEHÍCULOS, REPARACIONES, ORDEN DE TRABAJO
+       C3  BASE DE DATOS DEL NAVEGADOR
+       C4  CAMBIO DE PANTALLAS Y ACCESO
+       C5  PANEL (dibuja formularios y tabla de registros)
+       C6  CONSULTA PÚBLICA
+       C7  LOGO
+       C8  LOGO INCRUSTADO (última línea del archivo)
+    ==================================================================
+    -->
+
+    <style>
+        /* ==============================================================
+           INICIO A1: PALETA DE COLORES
+           Estos colores salen de tu logo. Cambia un valor aquí y se
+           actualiza todo el sitio (botones, tarjetas, menús, formularios).
+           ============================================================== */
+        :root {
+            --negro: #01060f;               /* fondo principal (igual al fondo del logo) */
+            --azul-noche: #071226;          /* fondo de secciones y tarjetas */
+            --azul: #092e5c;                /* azul del uniforme */
+            --azul-claro: #14478a;          /* azul para resaltar */
+            --dorado: #f6bd40;              /* dorado principal */
+            --dorado-rgb: 246, 189, 64;     /* el mismo dorado en formato RGB */
+            --dorado-claro: #ffd97a;        /* dorado brillante */
+            --dorado-oscuro: #ce901e;       /* dorado profundo */
+            --plata: #dfe1dc;               /* plata de la palabra SERVICE */
+            --texto: #e9edf5;               /* texto normal */
+            --texto-suave: #a9b6cc;         /* texto secundario */
+            --degradado-oro: linear-gradient(135deg, var(--dorado-claro), var(--dorado) 45%, var(--dorado-oscuro));
+
+            /* Foto de fondo de portada y pantallas de acceso.
+               Para usar tu propia foto pon: url("img/auto.jpg") */
+            --foto-taller: url("https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=1600&q=80");
+        }
+
+        
+        html[data-bs-theme="dark"] {
+            --bs-body-bg: var(--negro);
+            --bs-body-color: var(--texto);
+            --bs-secondary-color: var(--texto-suave);
+            --bs-border-color: rgba(var(--dorado-rgb), .25);
+            --bs-primary-rgb: var(--dorado-rgb);
+            --bs-warning-rgb: var(--dorado-rgb);
+            --bs-link-color-rgb: var(--dorado-rgb);
+            --bs-link-hover-color-rgb: 255, 217, 122;
+        }
+        /* ==================== FIN A1: PALETA DE COLORES ==================== */
+
+
+        /* ==============================================================
+           INICIO A2: BASE Y TIPOGRAFÍA
+           ============================================================== */
+        html { scroll-behavior: smooth; min-height: 100%; }
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--negro);
+            color: var(--texto);
+        }
+        [id] { scroll-margin-top: var(--nav-h, 90px); }
+        .text-suave { color: var(--texto-suave); }
+        .text-dorado { color: var(--dorado); }
+        /* ==================== FIN A2: BASE Y TIPOGRAFÍA ==================== */
+
+
+        /* ==============================================================
+           INICIO A3: LOGO
+           Tamaños del logo en cada lugar donde aparece.
+           ============================================================== */
+        .logo { display: block; height: auto; }
+        .logo-nav { width: 58px; height: 58px; border-radius: 12px; }
+        .logo-hero { width: min(340px, 80vw); border-radius: 28px; }
+        .logo-side { width: min(260px, 100%); }
+        .logo-footer { width: 72px; height: 72px; border-radius: 14px; }
+        .logo-marco {                     
+            display: inline-block;
+            border-radius: 28px;
+            overflow: hidden;
+            
+        }
+        .logo-marco .logo { border-radius: 0; }
+        /* ==================== FIN A3: LOGO ==================== */
+
+
+        /* ==============================================================
+           INICIO A4: BARRA DE NAVEGACIÓN
+           ============================================================== */
+        .navbar-custom {
+            --bs-navbar-color: var(--plata);
+            --bs-navbar-hover-color: var(--dorado);
+            --bs-navbar-active-color: var(--dorado);
+            background: var(--negro);
+            border-bottom: 2px solid var(--dorado);
+            box-shadow: 0 6px 24px rgba(0,0,0,.55);
+        }
+        .navbar-custom .nav-link { font-weight: 600; letter-spacing: .3px; transition: color .3s; }
+        .navbar-custom .nav-link:hover,
+        .navbar-custom .nav-link.active { color: var(--dorado); }
+        .brand-nombre { color: var(--dorado); font-weight: 800; letter-spacing: 1px; line-height: 1; }
+        .brand-lema { color: var(--plata); font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase; }
+        .navbar-toggler { border-color: rgba(var(--dorado-rgb), .6); }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23f6bd40' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        /* ==================== FIN A4: BARRA DE NAVEGACIÓN ==================== */
+
+
+        /* ==============================================================
+           INICIO A5: PORTADA
+           ============================================================== */
+        .hero-section {
+            background: linear-gradient(rgba(1,6,15,.78), rgba(1,6,15,.94)), var(--foto-taller) center/cover no-repeat;
+            padding: 70px 0 90px;
+            text-align: center;
+            border-bottom: 3px solid var(--dorado);
+        }
+        .hero-title { font-weight: 800; color: var(--plata); letter-spacing: 1px; margin-top: 1.8rem; }
+        .hero-title span { color: var(--dorado); }
+        .hero-sub { color: var(--texto-suave); max-width: 720px; margin: 0 auto 1.8rem; font-size: 1.1rem; }
+        /* ==================== FIN A5: PORTADA ==================== */
+
+
+        /* ==============================================================
+           INICIO A6: TARJETAS DE SERVICIOS
+           ============================================================== */
+        .bloque-oscuro { background: var(--azul-noche); }
+        .stat-card {
+            background: linear-gradient(160deg, #0d1c3b, var(--azul-noche));
+            border: 1px solid rgba(var(--dorado-rgb), .22);
+            border-top: 4px solid var(--dorado);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.4);
+            transition: transform .3s, box-shadow .3s;
+        }
+        .stat-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,.5), 0 0 30px rgba(var(--dorado-rgb), .12); }
+        .stat-icon { font-size: 2.6rem; color: var(--dorado); margin-bottom: 1rem; }
+        .stat-card h4 { color: var(--plata); }
+        /* ==================== FIN A6: TARJETAS DE SERVICIOS ==================== */
+
+
+        /* ==============================================================
+           INICIO A7: SECCIONES ESTADÍSTICAS, FOTOS E HISTORIA
+           ============================================================== */
+        .etiqueta {
+            display: inline-block;
+            padding: .4rem 1rem;
+            border-radius: 999px;
+            border: 1px solid rgba(var(--dorado-rgb), .5);
+            background: rgba(var(--dorado-rgb), .08);
+            color: var(--dorado);
+            font-weight: 600;
+            font-size: .85rem;
+            letter-spacing: .5px;
+        }
+        .seccion-titulo { color: var(--plata); font-weight: 800; margin-top: .6rem; }
+        .seccion-titulo::after {
+            content: "";
+            display: block;
+            width: 70px; height: 4px;
+            margin: .7rem auto 0;
+            border-radius: 4px;
+            background: var(--degradado-oro);
+        }
+        .tarjeta-oscura {
+            background: linear-gradient(160deg, #0b1a36, var(--azul-noche));
+            border: 1px solid rgba(var(--dorado-rgb), .2);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.35);
+        }
+        .tarjeta-oscura h5 { color: var(--plata); }
+        .foto-box { position: relative; margin: auto; height: 260px; width: 100%; }
+        .foto-placeholder {
+            height: 100%; width: 100%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: rgba(255,255,255,.03);
+            border: 2px dashed rgba(var(--dorado-rgb), .35);
+            border-radius: 12px;
+            color: var(--texto-suave);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .foto-placeholder i { font-size: 2.5rem; margin-bottom: .5rem; color: var(--dorado); }
+        .info-box {
+            background: rgba(255,255,255,.04);
+            border-left: 3px solid var(--dorado);
+            border-radius: 10px;
+            padding: 1rem;
+            color: var(--texto-suave);
+            font-size: .9rem;
+        }
+        .info-box strong { color: var(--plata); }
+        .foto-real { height: 100%; width: 100%; object-fit: cover; border-radius: 12px; display: block; }
+        .foto-galeria { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 8px; height: 100%; }
+        .foto-galeria img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+        .foto-logo-box { background: #01060f; display: flex; align-items: center; justify-content: center; }
+        .foto-logo-box img { max-height: 92%; max-width: 92%; width: auto; height: auto; object-fit: contain; }
+        /* ==================== FIN A7: SECCIONES ESTADÍSTICAS, FOTOS E HISTORIA ==================== */
+
+
+        /* ==============================================================
+           INICIO A8: SECCIÓN POR QUÉ ELEGIRNOS
+           ============================================================== */
+        .motivo-card {
+            height: 100%;
+            padding: 1.6rem;
+            background: linear-gradient(160deg, #0d1c3b, var(--azul-noche));
+            border: 1px solid rgba(var(--dorado-rgb), .22);
+            border-radius: 16px;
+            position: relative;
+            transition: transform .3s;
+        }
+        .motivo-card:hover { transform: translateY(-5px); }
+        .step-number {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            background: var(--degradado-oro);
+            color: #000;
+            font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1rem;
+            box-shadow: 0 6px 16px rgba(var(--dorado-rgb), .35);
+        }
+        .motivo-card h5 { color: var(--plata); font-weight: 700; }
+        /* ==================== FIN A8: SECCIÓN POR QUÉ ELEGIRNOS ==================== */
+
+
+        /* ==============================================================
+           INICIO A9: PIE DE PÁGINA
+           ============================================================== */
+        .footer-ric {
+            background: var(--negro);
+            border-top: 2px solid var(--dorado);
+            color: var(--texto-suave);
+        }
+        .footer-ric .brand-nombre { font-size: 1.2rem; }
+        /* ==================== FIN A9: PIE DE PÁGINA ==================== */
+
+
+        /* ==============================================================
+           INICIO A9.1: SECCIÓN DE CONTACTO
+           ============================================================== */
+        .contacto-card {
+            background: linear-gradient(160deg, #0d1c3b, var(--azul-noche));
+            border: 1px solid rgba(var(--dorado-rgb), .25);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.4);
+        }
+        .contacto-logo {
+            width: min(200px, 100%);
+            border-radius: 22px;
+            box-shadow: 0 0 0 2px rgba(var(--dorado-rgb), .5), 0 20px 45px rgba(0,0,0,.6);
+        }
+        .contacto-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(var(--dorado-rgb), .15);
+            color: var(--texto);
+            text-decoration: none;
+        }
+        .contacto-item:last-child { border-bottom: none; }
+        .contacto-item:hover { color: var(--dorado); }
+        .contacto-item .bi {
+            font-size: 1.4rem;
+            color: var(--dorado);
+            width: 34px;
+            flex: 0 0 auto;
+            text-align: center;
+        }
+        .contacto-item .etq-contacto {
+            display: block;
+            font-size: .72rem;
+            color: var(--texto-suave);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+        /* ==================== FIN A9.1: SECCIÓN DE CONTACTO ==================== */
+
+
+        /* ==============================================================
+           INICIO A10: PANTALLAS DE CONSULTA, ACCESO Y PANEL
+           (la columna izquierda con foto y la tarjeta de la derecha)
+           ============================================================== */
+        .login-page {
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 10%, #0c2350 0%, var(--negro) 60%);
+        }
+        .login-image {
+            background-image: var(--foto-taller);
+            background-position: center center;
+            background-size: cover;
+            min-height: 100vh;
+            position: relative;
+        }
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(1,6,15,.9), rgba(7,18,38,.8));
+            display: flex;
+            align-items: center;
+            gap: 35px;
+            padding: 40px 60px;
+        }
+        .contenido { color: var(--texto); max-width: 460px; flex: 1 1 auto; min-width: 0; }
+        .contenido h3 { color: var(--dorado); font-weight: 800; }
+        .login-card {
+            width: 100%;
+            max-width: 430px;
+            padding: 45px;
+            border-radius: 24px;
+            background: rgba(7,18,38,.94);
+            border: 1px solid rgba(var(--dorado-rgb), .35);
+            box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 50px rgba(var(--dorado-rgb), .08);
+        }
+        .login-card h2 { color: var(--plata); font-weight: 800; }
+        .login-card p { color: var(--texto-suave); }
+        .panel-card { max-width: 540px; padding: 35px; }
+        .icono {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            margin: auto;
+            background: var(--degradado-oro);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 45px;
+            color: #000;
+            box-shadow: 0 15px 25px rgba(0,0,0,.4), 0 0 30px rgba(var(--dorado-rgb), .25);
+        }
+        .titulo-form {
+            display: inline-block;
+            padding: .75rem 1.5rem;
+            border-radius: .6rem;
+            background: var(--degradado-oro);
+            color: #000;
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.35);
+        }
+        .resultado {
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(var(--dorado-rgb), .25);
+            border-left: 4px solid var(--dorado);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+        }
+        .resultado .etq { font-size: .72rem; color: var(--texto-suave); text-transform: uppercase; letter-spacing: 1px; margin-top: .6rem; }
+        .resultado .etq:first-child { margin-top: 0; }
+        .records-box { max-height: 240px; overflow: auto; }
+        .records-box table { font-size: .8rem; }
+        .records-box thead th { color: var(--dorado); white-space: nowrap; }
+        /* ==================== FIN A10: PANTALLAS DE CONSULTA, ACCESO Y PANEL ==================== */
+
+
+        /* ==============================================================
+           INICIO A11: FORMULARIOS Y BOTONES
+           ============================================================== */
+        .form-control, .form-select {
+            border-radius: 12px;
+            background-color: var(--negro);
+            border: 1px solid rgba(var(--dorado-rgb), .28);
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: var(--negro);
+            border-color: var(--dorado);
+            box-shadow: 0 0 12px rgba(var(--dorado-rgb), .35);
+        }
+        .form-floating > label { color: var(--texto-suave); }
+        .form-floating > label i { color: var(--dorado); }
+
+        /* Botón dorado principal (GUARDAR, INGRESAR, VER ESTADO, etc.) */
+        .btn-warning {
+            --bs-btn-color: #000;
+            --bs-btn-hover-color: #000;
+            --bs-btn-active-color: #000;
+            background: var(--degradado-oro);
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            transition: .3s;
+        }
+        .btn-warning:hover { filter: brightness(1.1); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,.45), 0 0 20px rgba(var(--dorado-rgb), .25); }
+        .btn-warning.btn-lg { font-size: 1.05rem; padding: .8rem 1.8rem; }
+
+        /* Botón con borde dorado (Acceso personal, Inicio, Ver servicios) */
+        .btn-outline-warning {
+            --bs-btn-color: var(--dorado);
+            --bs-btn-border-color: var(--dorado);
+            --bs-btn-hover-color: #000;
+            --bs-btn-hover-bg: var(--dorado);
+            --bs-btn-hover-border-color: var(--dorado);
+            --bs-btn-active-color: #000;
+            --bs-btn-active-bg: var(--dorado-claro);
+            --bs-btn-active-border-color: var(--dorado-claro);
+        }
+        .btn-outline-warning.btn-lg { border-radius: 12px; font-weight: 700; font-size: 1.05rem; padding: .8rem 1.8rem; }
+        /* ==================== FIN A11: FORMULARIOS Y BOTONES ==================== */
+
+
+        /* ==============================================================
+           INICIO A12: MENÚ DEL PANEL (Clientes, Diagnóstico, etc.)
+           ============================================================== */
+        .menu-ric { display: flex; flex-direction: column; gap: 10px; width: 230px; flex: 0 0 auto; }
+        .btn-menu {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: var(--plata);
+            font-weight: 700;
+            font-size: 16px;
+            background: linear-gradient(135deg, var(--azul), #061a38);
+            border: 1px solid rgba(var(--dorado-rgb), .45);
+            border-radius: 14px;
+            box-shadow: 0 8px 18px rgba(0,0,0,.4);
+            transition: .3s;
+        }
+        .btn-menu i { font-size: 21px; color: var(--dorado); }
+        .btn-menu:hover, .btn-menu.active {
+            background: var(--degradado-oro);
+            color: #000;
+            transform: translateX(10px) scale(1.04);
+            box-shadow: 0 14px 25px rgba(0,0,0,.5);
+        }
+        .btn-menu:hover i, .btn-menu.active i { color: #000; }
+        .btn-menu:active { transform: scale(.96); }
+        .menu-mobile {
+            display: flex; gap: 8px;
+            overflow-x: auto;
+            width: 100%; max-width: 540px;
+            padding: 4px 4px 14px;
+        }
+        .menu-mobile .btn-menu { flex: 0 0 auto; white-space: nowrap; font-size: 14px; padding: 8px 12px; border-radius: 12px; }
+        .menu-mobile .btn-menu i { font-size: 18px; }
+        .menu-mobile .btn-menu:hover, .menu-mobile .btn-menu.active { transform: none; }
+        /* ==================== FIN A12: MENÚ DEL PANEL ==================== */
+
+
+        /* ==============================================================
+           INICIO A13: VERSIÓN PARA CELULAR Y TABLET
+           ============================================================== */
+        @media (max-width: 992px) {
+            .login-image { display: none; }
+            .login-page {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-image: linear-gradient(rgba(1,6,15,.85), rgba(1,6,15,.92)), var(--foto-taller);
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+            .login-card { width: 95%; max-width: 380px; margin: 20px; padding: 30px; border-radius: 20px; }
+            .panel-card { max-width: 540px; }
+            .contenido { display: none; }
+            .hero-section { padding: 50px 0 70px; }
+        }
+        /* ==================== FIN A13: VERSIÓN PARA CELULAR Y TABLET ==================== */
+    </style>
+</head>
+<body>
+
+    <!-- =====================================================================
+         INICIO B1: SITIO PÚBLICO (lo que ve el cliente al entrar)
+         ===================================================================== -->
+    <div id="view-home" class="view">
+
+        <!-- ===== INICIO B1.1: BARRA DE NAVEGACIÓN ===== -->
+        <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="#inicio">
+                    <img class="logo logo-nav" alt="RIC Service - Taller Mecánico">
+                    <div class="ms-2 d-none d-sm-block">
+                        <span class="brand-nombre d-block">RIC SERVICE</span>
+                        <span class="brand-lema">Tu vehículo en las mejores manos</span>
+                    </div>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
+                        <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#servicios">Historia y Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#nosotros">Repuestos y Fotos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#galeria">Motivos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+                        <li class="nav-item ms-lg-3 my-2 my-lg-0">
+                            <a class="btn btn-outline-warning btn-sm rounded-pill" href="#" data-go="login">
+                                <i class="bi bi-lock-fill me-1"></i>Acceso personal
+                            </a>
+                        </li>
+                        <li class="nav-item ms-lg-2">
+                            <a class="btn btn-warning rounded-pill px-4" style="font-size:15px;" href="#" data-go="consulta">
+                                <i class="bi bi-gear-fill me-1"></i>CONSULTAR REPARACIÓN
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- ===== FIN B1.1: BARRA DE NAVEGACIÓN ===== -->
+
+
+        <!-- ===== INICIO B1.2: PORTADA (logo grande y botones) ===== -->
+        <header class="hero-section" id="inicio">
+            <div class="container">
+                <div class="logo-marco"><img class="logo logo-hero" alt="RIC Service - Taller Mecánico"></div>
+                <h1 class="hero-title display-5">Taller Mecánico <span>Automotriz</span></h1>
+                <p class="hero-sub">Mantenimiento, reparación y confianza. En RIC SERVICE tu vehículo está en las mejores manos.</p>
+                <div class="d-flex flex-wrap gap-3 justify-content-center">
+                    <a class="btn btn-warning btn-lg" href="#" data-go="consulta"><i class="bi bi-search me-2"></i>CONSULTAR REPARACIÓN</a>
+                    <a class="btn btn-outline-warning btn-lg" href="#servicios"><i class="bi bi-tools me-2"></i>Ver servicios</a>
+                </div>
+            </div>
+        </header>
+        <!-- ===== FIN B1.2: PORTADA ===== -->
+
+
+        <!-- ===== INICIO B1.3: TRES TARJETAS (Diagnósticos, Cambios de aceite, Motores) ===== -->
+        <section class="py-5 bloque-oscuro">
+            <div class="container">
+                <div class="row g-4 text-center">
+
+                    <!-- Tarjeta 1: Diagnósticos -->
+                    <div class="col-md-4">
+                        <div class="card stat-card p-4 h-100">
+                            <div class="stat-icon"><i class="bi bi-clipboard2-pulse-fill"></i></div>
+                            <h4 class="fw-bold">Diagnósticos</h4>
+                            <p class="text-suave mb-0">En RIC SERVICE nos especializamos en brindar soluciones confiables para el cuidado y mantenimiento de tu vehículo. Contamos con personal altamente capacitado, herramientas de diagnóstico de última tecnología y un firme compromiso con la calidad en cada reparación. Si tu automóvil presenta ruidos extraños, pérdida de potencia o cualquier otra falla, nuestro equipo realizará una revisión completa para identificar el problema y ofrecerte la mejor solución. Trabajamos con honestidad, rapidez y profesionalismo para que vuelvas a conducir con total seguridad y confianza.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 2: Cambios de aceite -->
+                    <div class="col-md-4">
+                        <div class="card stat-card p-4 h-100">
+                            <div class="stat-icon"><i class="bi bi-droplet-fill"></i></div>
+                            <h4 class="fw-bold">Cambios de aceite</h4>
+                            <p class="text-suave mb-0">En RIC SERVICE ofrecemos un servicio integral para el cuidado de tu vehículo. Realizamos cambios de aceite y filtros, mantenimiento preventivo, reparación de motores, sistemas de frenos, suspensión, dirección, embrague, transmisión, electricidad automotriz y diagnóstico computarizado. Nuestro equipo de técnicos trabaja con herramientas modernas y repuestos de calidad para garantizar un servicio seguro, eficiente y confiable. Ya sea para un mantenimiento de rutina o una reparación compleja, en RIC SERVICE encontrarás la experiencia y el compromiso que tu vehículo necesita para mantenerse en óptimas condiciones. Tu seguridad y satisfacción son nuestra mayor prioridad.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 3: Reparación de motores -->
+                    <div class="col-md-4">
+                        <div class="card stat-card p-4 h-100">
+                            <div class="stat-icon"><i class="bi bi-gear-wide-connected"></i></div>
+                            <h4 class="fw-bold">Reparación de Motores y mucho más</h4>
+                            <p class="text-suave mb-0">En RIC SERVICE somos especialistas en la reparación y mantenimiento de motores a gasolina y diésel, ofreciendo soluciones eficientes para recuperar el máximo rendimiento de tu vehículo. También realizamos reparación de cajas de cambios, embragues, sistemas de frenos, suspensión, dirección, transmisión, sistema de refrigeración, electricidad automotriz, inyección electrónica y diagnóstico computarizado. Nuestro equipo de mecánicos trabaja con equipos modernos y repuestos de calidad para garantizar un servicio confiable, preciso y duradero. Nos comprometemos a cuidar tu vehículo como si fuera nuestro, brindándote seguridad, confianza y un excelente desempeño en cada kilómetro recorrido.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <!-- ===== FIN B1.3: TRES TARJETAS ===== -->
+
+
+        <!-- ===== INICIO B1.4: ESTADÍSTICAS, FOTOS, HISTORIA Y SERVICIOS ===== -->
+        <section class="py-5" id="nosotros">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <span class="etiqueta">Conoce nuestro taller</span>
+                    <h2 class="seccion-titulo display-6">Repuestos y Fotos de la empresa</h2>
+                </div>
+
+                <div class="row g-4 mb-5">
+
+                    <!-- Cuadro: Estado de servicio semanal (pon aquí tus fotos) -->
+                    <div class="col-lg-6">
+                        <div class="tarjeta-oscura p-4 h-100">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-box-seam-fill me-2 text-dorado"></i>REPUESTOS</h5>
+                            <div class="foto-box">
+                                <img class="foto-real" src="img/repuestos.webp" alt="Repuestos y filtros disponibles en RIC SERVICE">
+                            </div>
+                            <div class="info-box mt-3">
+                                <strong>Repuestos y filtros originales:</strong> En RIC SERVICE contamos con un amplio stock de repuestos, filtros, aceites y accesorios de marcas reconocidas, listos para tu vehículo. Así evitamos demoras y garantizamos piezas de calidad en cada reparación.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cuadro: Fotos de la empresa -->
+                    <div class="col-lg-6">
+                        <div class="tarjeta-oscura p-4 h-100">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-camera-fill me-2 text-dorado"></i>FOTOS DE LA EMPRESA</h5>
+                            <div class="foto-box">
+                                <div class="foto-galeria">
+                                    <img src="img/ambulancia.webp" alt="Ambulancia atendida en RIC SERVICE">
+                                    <img src="img/auto.webp" alt="Vehículo atendido en RIC SERVICE">
+                                </div>
+                            </div>
+                            <div class="info-box mt-3">
+                                <strong>Conoce nuestro trabajo:</strong> Las imágenes muestran el compromiso y la dedicación de nuestros mecánicos en cada reparación. En RIC SERVICE atendemos motores, frenos, suspensión, cambios de aceite, electricidad automotriz y mucho más, utilizando equipos modernos y repuestos de calidad. Si buscas un taller de confianza en Oruro, te invitamos a visitarnos y dejar tu vehículo en manos de verdaderos profesionales. ¡Tu seguridad y satisfacción son nuestra mayor prioridad!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4" id="servicios">
+
+                    <!-- Cuadro: Historia de la empresa -->
+                    <div class="col-lg-5">
+                        <div class="tarjeta-oscura p-4 h-100">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-clock-history me-2 text-dorado"></i>HISTORIA DE LA EMPRESA: RIC SERVICE</h5>
+                            <div class="foto-box foto-logo-box">
+                                <img src="img/logo-historia.webp" alt="Logo de RIC SERVICE">
+                            </div>
+                            <div class="info-box mt-3">
+                                <p>RIC SERVICE nació en el año 2018 como un pequeño emprendimiento familiar dedicado a la reparación y el mantenimiento automotriz. Sus inicios fueron humildes, con un espacio de trabajo sencillo y tan solo dos trabajadores, pero con una gran visión de crecimiento, compromiso y pasión por la mecánica.
+
+                                Desde el primer día, nuestro principal objetivo fue ofrecer un servicio de calidad, trabajando con responsabilidad, honestidad y dedicación para brindar a cada cliente soluciones confiables para su vehículo. Con esfuerzo, perseverancia y el deseo constante de mejorar, fuimos construyendo una reputación basada en la confianza y la satisfacción de nuestros clientes.
+
+                                Con el paso de los años, RIC SERVICE fue creciendo y evolucionando. Lo que comenzó como un pequeño taller familiar se convirtió en una empresa con su propio equipo de trabajadores, ampliando sus servicios y fortaleciendo su experiencia en el sector automotriz. Cada desafío superado y cada cliente satisfecho nos motivaron a seguir adelante, apostando por la innovación, la calidad y la mejora continua.
+
+                                Un momento muy importante en nuestra trayectoria llegó en el año 2025, cuando RIC SERVICE recibió el reconocimiento como Mejor Taller Mecánico de Oruro, un logro que representa el resultado de años de esfuerzo, dedicación y trabajo constante. Este reconocimiento no solo nos llena de orgullo, sino que también nos impulsa a continuar creciendo y ofreciendo un servicio cada vez mejor.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cuadro: Servicios de la empresa -->
+                    <div class="col-lg-7">
+                        <div class="tarjeta-oscura p-1 h-100">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-wrench-adjustable me-2 text-dorado"></i>SERVICIOS DE LA EMPRESA</h5>
+                            <div class="foto-box">
+                                <div class="foto-galeria ">
+                                    <img src="img/herramientas.webp" alt="Herramientas del taller RIC SERVICE"
+                                     style="width: 500px; height: 250px; object-fit: cover; display: block; margin: auto;">>
+                                    
+                                </div>
+                            </div>
+                            <div class="info-box mt-3">
+                                <strong>Servicios que ofrecemos en RIC SERVICE:</strong>
+                                <ul class="mt-2 mb-0">
+                                    <li>🔧 Reparación y mantenimiento de motores.</li>
+                                    <li>🛢️ Cambio de aceite y filtros.</li>
+                                    <li>🛑 Reparación y mantenimiento de frenos.</li>
+                                    <li>⚙️ Reparación de cajas de cambio y embragues.</li>
+                                    <li>🚗 Mantenimiento de suspensión y dirección.</li>
+                                    <li>🔋 Electricidad automotriz y diagnóstico computarizado.</li>
+                                    <li>❄️ Servicio de sistema de refrigeración y radiadores.</li>
+                                    <li>🌡️ Afinación de motores e inyección electrónica.</li>
+                                    <li>🛠️ Mantenimiento preventivo y correctivo.</li>
+                                    <li>✅ Revisión general para viajes, para que estés sin ningún peligro.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ===== FIN B1.4: ESTADÍSTICAS, FOTOS, HISTORIA Y SERVICIOS ===== -->
+
+
+        <!-- ===== INICIO B1.5: POR QUÉ ELEGIR A RIC SERVICE (4 motivos) ===== -->
+        <section class="py-5 bloque-oscuro" id="galeria">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <span class="etiqueta">RIC SERVICE 2026</span>
+                    <h2 class="seccion-titulo display-6">POR QUÉ ELEGIR A RIC SERVICE</h2>
+                    <p class="text-suave mt-3 mb-0">En RIC SERVICE cuidamos tu vehículo como si fuera nuestro.</p>
+                </div>
+                <div class="row g-4">
+
+                    <!-- Motivo 1 -->
+                    <div class="col-md-6">
+                        <div class="motivo-card">
+                            <div class="step-number">1</div>
+                            <h5>👨‍🔧 PERSONAL CAPACITADO</h5>
+                            <p class="text-suave mb-0">Sabemos lo importante que es confiar tu vehículo a las personas correctas. Por eso, en RIC SERVICE contamos con mecánicos responsables, con experiencia y en constante aprendizaje. Trabajamos con dedicación en cada reparación para que tengas la tranquilidad de saber que tu automóvil está en buenas manos.</p>
+                        </div>
+                    </div>
+
+                    <!-- Motivo 2 -->
+                    <div class="col-md-6">
+                        <div class="motivo-card">
+                            <div class="step-number">2</div>
+                            <h5>🛡️ GARANTÍA</h5>
+                            <p class="text-suave mb-0">Cada trabajo que realizamos está respaldado por nuestro compromiso con la calidad. No solo reparamos tu vehículo, también te damos la confianza de que el servicio fue realizado de manera correcta, utilizando repuestos de calidad y cuidando cada detalle para tu tranquilidad.</p>
+                        </div>
+                    </div>
+
+                    <!-- Motivo 3 -->
+                    <div class="col-md-6">
+                        <div class="motivo-card">
+                            <div class="step-number">3</div>
+                            <h5>⚡ ATENCIÓN RÁPIDA Y AMABLE</h5>
+                            <p class="text-suave mb-0">Entendemos que tu tiempo es valioso. Por eso nos esforzamos por brindarte una atención rápida, amable y personalizada. Escuchamos tus necesidades, resolvemos tus dudas y trabajamos para entregarte tu vehículo en el menor tiempo posible, sin descuidar la calidad del servicio.</p>
+                        </div>
+                    </div>
+
+                    <!-- Motivo 4 -->
+                    <div class="col-md-6">
+                        <div class="motivo-card">
+                            <div class="step-number">4</div>
+                            <h5>✅ CALIDAD CERTIFICADA</h5>
+                            <p class="text-suave mb-0">En RIC SERVICE creemos que un buen trabajo se demuestra con resultados. Utilizamos herramientas modernas, técnicas especializadas y repuestos de confianza para ofrecer reparaciones duraderas y seguras. Nuestro objetivo es que cada cliente se vaya satisfecho y regrese con la seguridad de haber elegido un taller en el que realmente puede confiar.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <!-- ===== FIN B1.5: POR QUÉ ELEGIR A RIC SERVICE ===== -->
+
+
+        <!-- ===== INICIO B1.5.1: CONTACTO
+             Para actualizar el teléfono o la dirección, edita el texto
+             de los enlaces de abajo (busca "69346521" y "Catacora"). ===== -->
+        <section class="py-5 bloque-oscuro" id="contacto">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <span class="etiqueta">Escríbenos o visítanos</span>
+                    <h2 class="seccion-titulo display-6">Contáctanos</h2>
+                </div>
+                <div class="contacto-card p-4 p-md-5 mx-auto" style="max-width: 780px;">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-4 text-center">
+                            <img class="contacto-logo" src="img/logo.webp" alt="RIC Service - Taller Mecánico">
+                        </div>
+                        <div class="col-md-8">
+                            <a class="contacto-item" href="tel:+59169346521">
+                                <i class="bi bi-telephone-fill"></i>
+                                <div>
+                                    <span class="etq-contacto">Celular / WhatsApp</span>
+                                    69346521
+                                </div>
+                            </a>
+                            <a class="contacto-item" href="https://wa.me/59169346521" target="_blank" rel="noopener">
+                                <i class="bi bi-whatsapp"></i>
+                                <div>
+                                    <span class="etq-contacto">Escríbenos por WhatsApp</span>
+                                    Coordina tu cita o consulta el estado de tu vehículo
+                                </div>
+                            </a>
+                            <div class="contacto-item">
+                                <i class="bi bi-geo-alt-fill"></i>
+                                <div>
+                                    <span class="etq-contacto">Ubicación</span>
+                                    Calle Catacora, entre Pasaje A
+                                </div>
+                            </div>
+                            <div class="contacto-item">
+                                <i class="bi bi-signpost-2-fill"></i>
+                                <div>
+                                    <span class="etq-contacto">Ciudad</span>
+                                    Oruro, Bolivia
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ===== FIN B1.5.1: CONTACTO ===== -->
+
+
+        <!-- ===== INICIO B1.6: PIE DE PÁGINA ===== -->
+        <footer class="footer-ric py-4">
+            <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 text-center text-md-start">
+                <div class="d-flex align-items-center gap-3">
+                    <img class="logo logo-footer" alt="RIC Service - Taller Mecánico">
+                    <div>
+                        <div class="brand-nombre">RIC SERVICE</div>
+                        <div class="brand-lema">Tu vehículo en las mejores manos</div>
+                    </div>
+                </div>
+                <div class="text-end text-center-md">
+                    <div class="small mb-1"><i class="bi bi-telephone-fill text-dorado me-1"></i>69346521 &nbsp;·&nbsp; <i class="bi bi-geo-alt-fill text-dorado me-1"></i>Calle Catacora, entre Pasaje A</div>
+                    <div class="small">© 2026 RIC SERVICE · Taller Mecánico Automotriz · Oruro, Bolivia</div>
+                </div>
+            </div>
+        </footer>
+        <!-- ===== FIN B1.6: PIE DE PÁGINA ===== -->
+
+    </div>
+    <!-- ===================== FIN B1: SITIO PÚBLICO ===================== -->
+
+
+    <!-- =====================================================================
+         INICIO B2: PANTALLA CONSULTAR ESTADO DEL VEHÍCULO (pública)
+         El cliente escribe su nombre y la placa para ver el estado.
+         ===================================================================== -->
+    <section id="view-consulta" class="view login-page d-none">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+                <div class="col-lg-7 login-image">
+                    <div class="overlay">
+                        <div class="contenido">
+                            <div class="logo-marco mb-3"><img class="logo logo-side" alt="RIC Service - Taller Mecánico"></div>
+                            <h3>Taller Mecánico</h3>
+                            <p>Consulta el estado de tu vehículo con tu nombre y la placa.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-flex justify-content-center align-items-center py-4">
+                    <div class="login-card">
+                        <div class="text-center mb-4">
+                            <div class="icono"><i class="bi bi-tools"></i></div>
+                        </div>
+                        <div class="text-center my-4">
+                            <h3 class="titulo-form">CONSULTA EL ESTADO DE TU VEHÍCULO</h3>
+                        </div>
+                        <form id="form-consulta" novalidate>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="c-nombre" placeholder="Nombre" required>
+                                <label for="c-nombre"><i class="bi bi-chat-left-text-fill me-2"></i>NOMBRE</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="c-placa" placeholder="Placa" required>
+                                <label for="c-placa"><i class="bi bi-gear-wide-connected me-2"></i>PLACA</label>
+                            </div>
+                            <button class="btn btn-warning w-100 py-3" type="submit">
+                                <i class="bi bi-search me-2"></i>VER ESTADO
+                            </button>
+                        </form>
+                        <div id="consulta-result" class="mt-3"></div>
+                        <div class="text-center mt-3">
+                            <a href="#" class="small text-decoration-none" data-go="home"><i class="bi bi-arrow-left"></i> Volver al inicio</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ===================== FIN B2: PANTALLA CONSULTAR ESTADO ===================== -->
+
+
+    <!-- =====================================================================
+         INICIO B3: PANTALLA ACCESO DEL PERSONAL (login)
+         ===================================================================== -->
+    <section id="view-login" class="view login-page d-none">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+                <div class="col-lg-7 login-image">
+                    <div class="overlay">
+                        <div class="contenido">
+                            <div class="logo-marco mb-3"><img class="logo logo-side" alt="RIC Service - Taller Mecánico"></div>
+                            <h3>Taller Mecánico</h3>
+                            <p>Control de clientes, vehículos, órdenes de trabajo, y Sistema de registro</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-flex justify-content-center align-items-center py-4">
+                    <div class="login-card">
+                        <div class="text-center mb-4">
+                            <div class="icono"><i class="bi bi-tools"></i></div>
+                            <h2 class="mt-3">Bienvenido</h2>
+                            <p>La calidad de un taller se refleja en cada reparación. Trabajamos con precisión, compromiso y confianza para mantener cada vehículo en las mejores condiciones.</p>
+                        </div>
+                        <form id="form-login" novalidate>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="l-usuario" placeholder="Usuario" autocomplete="username" required>
+                                <label for="l-usuario"><i class="bi bi-person-fill me-2"></i>Usuario</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="l-clave" placeholder="Contraseña" autocomplete="current-password" required>
+                                <label for="l-clave"><i class="bi bi-lock-fill me-2"></i>Contraseña</label>
+                            </div>
+                            <div id="login-error" class="alert alert-danger py-2 small d-none">Usuario o contraseña incorrectos.</div>
+                            <button class="btn btn-warning w-100 py-3" type="submit">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>INGRESAR
+                            </button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <a href="#" class="small text-decoration-none" data-go="home"><i class="bi bi-arrow-left"></i> Volver al inicio</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ===================== FIN B3: PANTALLA ACCESO DEL PERSONAL ===================== -->
+
+
+    <!-- =====================================================================
+         INICIO B4: PANTALLA PANEL DE REGISTROS (solo con acceso)
+         Aquí se muestran los formularios de Clientes, Diagnóstico, Historial,
+         Mecánicos, Empleados, Vehículos, Reparaciones y Orden de Trabajo.
+         Los campos de cada formulario están en el JavaScript: busca
+         "INICIO C2" más abajo.
+         ===================================================================== -->
+    <section id="view-panel" class="view login-page d-none">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+
+                <!-- Columna izquierda: logo y menú (en computadora) -->
+                <div class="col-lg-7 login-image">
+                    <div class="overlay">
+                        <nav class="menu-ric" id="menu-desktop"></nav>
+                        <div class="contenido">
+                            <div class="logo-marco mb-3"><img class="logo logo-side" alt="RIC Service - Taller Mecánico"></div>
+                            <h3>Taller Mecánico</h3>
+                            <p>Control de clientes, vehículos, órdenes de trabajo, y Sistema de registro</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna derecha: formulario y tabla de registros -->
+                <div class="col-lg-5 d-flex justify-content-center align-items-center py-4">
+                    <div class="w-100 d-flex flex-column align-items-center">
+                        <nav class="menu-mobile d-lg-none" id="menu-mobile"></nav>
+                        <div class="login-card panel-card">
+                            <div class="d-flex justify-content-between mb-3">
+                                <button class="btn btn-sm btn-outline-warning rounded-pill" type="button" data-go="home">
+                                    <i class="bi bi-house-fill me-1"></i>Inicio
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill" type="button" id="btn-logout">
+                                    <i class="bi bi-box-arrow-right me-1"></i>Salir
+                                </button>
+                            </div>
+                            <div class="text-center mb-3">
+                                <div class="icono"><i class="bi bi-tools" id="panel-icon"></i></div>
+                            </div>
+                            <div class="text-center my-3">
+                                <h3 class="titulo-form" id="panel-title"></h3>
+                            </div>
+                            <div id="panel-msg" class="alert py-2 small d-none" role="alert"></div>
+                            <form id="panel-form" novalidate></form>
+                            <hr>
+                            <h6 class="fw-bold">
+                                <i class="bi bi-table me-1 text-dorado"></i>Registros guardados
+                                <span class="badge bg-secondary" id="panel-count">0</span>
+                            </h6>
+                            <div id="panel-records" class="table-responsive records-box"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- ===================== FIN B4: PANTALLA PANEL DE REGISTROS ===================== -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    (function () {
+        'use strict';
+
+        /* ==============================================================
+           INICIO C1: CONFIGURACIÓN
+           OJO: este acceso es solo una puerta simple del navegador.
+           Cualquiera que abra el código puede ver estos datos.
+           Cambia el usuario y la clave. Para seguridad real hace falta
+           un servidor.
+           ============================================================== */
+        var AUTH = { usuario: 'admin', clave: 'ric2026' };   // <- usuario y clave del personal
+        var DB_KEY = 'ric_service_db';
+        var AUTH_KEY = 'ric_service_auth';
+
+        // Estados que puede tener una orden de trabajo (y sus colores en la consulta)
+        var ESTADOS = ['Recibido', 'En diagnóstico', 'En reparación', 'Listo para entrega', 'Entregado'];
+        var ESTADO_COLOR = {
+            'Recibido': 'secondary',
+            'En diagnóstico': 'info',
+            'En reparación': 'warning',
+            'Listo para entrega': 'success',
+            'Entregado': 'light'
+        };
+        /* ==================== FIN C1: CONFIGURACIÓN ==================== */
+
+
+        /* ---------- Utilidades (funciones de ayuda) ---------- */
+        function $(s, r) { return (r || document).querySelector(s); }
+        function esc(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+        function norm(s) {
+            return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        }
+        function normPlaca(s) { return norm(s).replace(/[^a-z0-9]/g, ''); }
+        function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+        function hoy() {
+            var d = new Date();
+            d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+            return d.toISOString().slice(0, 10);
+        }
+        function fmtFecha(s) {
+            return /^\d{4}-\d{2}-\d{2}$/.test(s || '') ? s.split('-').reverse().join('/') : (s || '');
+        }
+
+
+        /* ==============================================================
+           INICIO C2: FORMULARIOS DEL PANEL
+           Cada bloque de abajo es UN formulario. Para agregar, quitar o
+           renombrar campos, edita la lista "fields" de ese bloque.
+           Tipos de campo: text, tel, email, number, date, textarea, select.
+           ============================================================== */
+        var MODULES = [
+
+            /* ===== INICIO C2.1: FORMULARIO DE CLIENTES ===== */
+            {
+                key: 'clientes', menu: 'Clientes', icon: 'bi-people-fill',
+                title: 'FORMULARIO DE CLIENTES',
+                label: function (r) { return [r.nombre, r.paterno, r.materno].join(' ').replace(/\s+/g, ' ').trim(); },
+                fields: [
+                    { id: 'nombre', label: 'NOMBRE', icon: 'bi-person-fill', type: 'text' },
+                    { id: 'paterno', label: 'APELLIDO PATERNO', icon: 'bi-person-fill', type: 'text' },
+                    { id: 'materno', label: 'APELLIDO MATERNO', icon: 'bi-person-fill', type: 'text', required: false },
+                    { id: 'celular', label: 'NÚMERO DE CELULAR', icon: 'bi-telephone-fill', type: 'tel' },
+                    { id: 'fecha', label: 'FECHA', icon: 'bi-calendar-date-fill', type: 'date', hoy: true },
+                    { id: 'correo', label: 'CORREO ELECTRÓNICO', icon: 'bi-envelope-fill', type: 'email', required: false }
+                ]
+            },
+            /* ===== FIN C2.1: FORMULARIO DE CLIENTES ===== */,
+
+            /* ===== INICIO C2.6: FORMULARIO DE VEHÍCULOS ===== */
+            {
+                key: 'vehiculos', menu: 'Vehículos', icon: 'bi-car-front-fill',
+                title: 'FORMULARIO DE VEHÍCULOS',
+                label: function (r) { return r.placa + ' — ' + r.marca + ' ' + r.modelo; },
+                fields: [
+                    { id: 'placa', label: 'PLACA', icon: 'bi-upc-scan', type: 'text' },
+                    { id: 'modelo', label: 'MODELO', icon: 'bi-car-front', type: 'text' },
+                    { id: 'fecha', label: 'FECHA', icon: 'bi-calendar-date-fill', type: 'date', hoy: true },
+                    { id: 'marca', label: 'MARCA', icon: 'bi-bookmark-fill', type: 'text' },
+                    { id: 'color', label: 'COLOR', icon: 'bi-palette-fill', type: 'text' }
+                ]
+            },
+            /* ===== FIN C2.6: FORMULARIO DE VEHÍCULOS ===== */,
+
+            /* ===== INICIO C2.2: FORMULARIO DE DIAGNÓSTICO ===== */
+            {
+                key: 'diagnosticos', menu: 'Diagnóstico', icon: 'bi-search',
+                title: 'FORMULARIO DE DIAGNÓSTICO',
+                label: function (r) { return fmtFecha(r.fecha) + ' — ' + r.descripcion; },
+                fields: [
+                    { id: 'vehiculoId', label: 'VEHÍCULO', icon: 'bi-car-front-fill', type: 'select', from: 'vehiculos' },
+                    { id: 'mecanicoId', label: 'MECÁNICO QUE DIAGNOSTICA', icon: 'bi-person-gear', type: 'select', from: 'mecanicos' },
+                    { id: 'descripcion', label: 'DIAGNÓSTICO', icon: 'bi-clipboard2-pulse-fill', type: 'textarea' },
+                    { id: 'fecha', label: 'FECHA', icon: 'bi-calendar-date-fill', type: 'date', hoy: true }
+                ]
+            },
+            /* ===== FIN C2.2: FORMULARIO DE DIAGNÓSTICO ===== */,
+
+            /* ===== INICIO C2.7: FORMULARIO DE REPARACIONES ===== */
+                 {
+    key: 'reparaciones', 
+    menu: 'Reparaciones', 
+    icon: 'bi-tools',
+    title: 'FORMULARIO DE REPARACIONES',
+    label: function (r) { 
+        return Array.isArray(r.tipo) ? r.tipo.join(', ') : r.tipo; 
+    },
+    fields: [
+        { 
+            id: 'tipo', 
+            label: 'TIPO DE REPARACIÓN', 
+            icon: 'bi-tools', 
+            type: 'select', 
+            multiple: true, // Permite selección múltiple en el select
+            options: [
+                // Mantenimiento periódico
+                'Cambio de aceite y filtros de motor',
+                'Cambio de filtro de aire y aire acondicionado',
+                'Cambio de filtro de combustible',
+                'Mantenimiento preventivo general',
+                'Mantenimiento correctivo',
+                'Revisión general para viajes',
+
+                // Frenos
+                'Cambio de pastillas de freno',
+                'Cambio de zapatas y bandas de freno',
+                'Rectificación de discos y tambores de freno',
+                'Cambio de líquido de frenos y purgado',
+                'Reparación de bomba y sistema ABS',
+
+                // Motor e Inyección
+                'Reparación y ajuste de motor (Overhaul)',
+                'Rectificación de motor',
+                'Cambio de correa o cadena de distribución',
+                'Afinación de motor (Tune-up)',
+                'Limpieza de inyectores por ultrasonido',
+                'Reparación y diagnóstico del sistema de inyección',
+                'Cambio de bujías y cables',
+                'Diagnóstico computarizado por escáner',
+                'Regulación de válvulas',
+
+                // Transmisión y Embrague
+                'Cambio de kit de embrague (Disco, prensa y collarín)',
+                'Reparación de caja de cambios manual',
+                'Mantenimiento y reparación de caja automática',
+                'Cambio de aceite de transmisión y diferenciales',
+                'Reparación de juntas homocinéticas y semiejes',
+
+                // Suspensión y Dirección
+                'Cambio de amortiguadores y resortes',
+                'Reparación de suspensión y bandejas',
+                'Cambio de terminales de dirección y rótulas',
+                'Alineación y balanceo computarizado',
+                'Reparación de cremallera o caja de dirección',
+
+                // Sistema de Refrigeración
+                'Reparación y baqueteo de radiador',
+                'Cambio de líquido refrigerante (Coolant)',
+                'Cambio de bomba de agua',
+                'Cambio de termostato y mangueras',
+                'Reparación del sistema de aire acondicionado y calefacción',
+
+                // Escape y Otros
+                'Reparación y soldadura de tubo de escape y silenciador',
+                'Cambio de catalizador',
+                'Otros'
+            ]
+        },
+        { id: 'costo', label: 'COSTOS (Bs)', icon: 'bi-cash-stack', type: 'number', format: 'bs' },
+        { id: 'fecha', label: 'FECHA', icon: 'bi-calendar-date-fill', type: 'date', hoy: true }
+    ]
+}
+    
+            /* ===== FIN C2.7: FORMULARIO DE REPARACIONES ===== */,
+
+            /* ===== INICIO C2.8: FORMULARIO DE ORDEN DE TRABAJO ===== */
+            {
+                key: 'ordenes', menu: 'Orden de Trabajo', icon: 'bi-clipboard-check-fill',
+                title: 'FORMULARIO DE ORDEN DE TRABAJO',
+                label: function (r) {
+                    var v = find('vehiculos', r.vehiculoId), c = find('clientes', r.clienteId);
+                    return (v ? v.placa : '¿?') + ' — ' + (c ? MOD.clientes.label(c) : '¿?') + ' (' + r.estado + ')';
+                },
+                fields: [
+                    { id: 'clienteId', label: 'CLIENTE', icon: 'bi-people-fill', type: 'select', from: 'clientes' },
+                    { id: 'vehiculoId', label: 'VEHÍCULO', icon: 'bi-car-front-fill', type: 'select', from: 'vehiculos' },
+                    { id: 'mecanicoId', label: 'MECÁNICO', icon: 'bi-person-gear', type: 'select', from: 'mecanicos' },
+                    { id: 'reparacionId', label: 'REPARACIÓN', icon: 'bi-tools', type: 'select', from: 'reparaciones' },
+                    { id: 'estado', label: 'ESTADO', icon: 'bi-flag-fill', type: 'select', options: ESTADOS, defecto: 'Recibido' },
+                    { id: 'fecha', label: 'FECHA DE INGRESO', icon: 'bi-calendar-date-fill', type: 'date', hoy: true }
+                ]
+            }
+            /* ===== FIN C2.8: FORMULARIO DE ORDEN DE TRABAJO ===== */,
+
+            /* ===== INICIO C2.3: FORMULARIO DE HISTORIAL DE TRABAJO ===== */
+            {
+                key: 'historial', menu: 'Historial', icon: 'bi-clock-history',
+                title: 'FORMULARIO DE HISTORIAL DE TRABAJO',
+                label: function (r) { return fmtFecha(r.fecha) + ' — ' + r.estadoNuevo; },
+                fields: [
+                    { id: 'ordenId', label: 'ORDEN DE TRABAJO', icon: 'bi-clipboard-check-fill', type: 'select', from: 'ordenes' },
+                    { id: 'estadoInicial', label: 'ESTADO INICIAL', icon: 'bi-tools', type: 'text', readonly: true, required: false },
+                    { id: 'estadoNuevo', label: 'ESTADO NUEVO', icon: 'bi-fuel-pump-fill', type: 'select', options: ESTADOS },
+                    { id: 'fecha', label: 'FECHA', icon: 'bi-calendar-date-fill', type: 'date', hoy: true }
+                ],
+                // Al elegir la orden, el "estado inicial" se llena solo
+                setup: function (form) {
+                    var sel = form.elements.ordenId, ini = form.elements.estadoInicial;
+                    sel.addEventListener('change', function () {
+                        var o = find('ordenes', sel.value);
+                        ini.value = o ? o.estado : '';
+                    });
+                },
+                // Al guardar, el estado nuevo se aplica a la orden (y se ve en la consulta pública)
+                afterSave: function (rec) {
+                    var o = find('ordenes', rec.ordenId);
+                    if (o) o.estado = rec.estadoNuevo;
+                }
+            },
+            /* ===== FIN C2.3: FORMULARIO DE HISTORIAL DE TRABAJO ===== */,
+
+            /* ===== INICIO C2.4: FORMULARIO DE MECÁNICOS ===== */
+            {
+                key: 'mecanicos', menu: 'Mecánicos', icon: 'bi-person-gear',
+                title: 'FORMULARIO DE REGISTRO DE MECÁNICOS',
+                label: function (r) { return [r.nombre, r.paterno].join(' ').trim() + (r.profesion ? ' (' + r.profesion + ')' : ''); },
+                fields: [
+                    { id: 'nombre', label: 'NOMBRE', icon: 'bi-person-fill', type: 'text' },
+                    { id: 'paterno', label: 'APELLIDO PATERNO', icon: 'bi-person-fill', type: 'text' },
+                    { id: 'materno', label: 'APELLIDO MATERNO', icon: 'bi-person-fill', type: 'text', required: false },
+                    { id: 'profesion', label: 'PROFESIÓN', icon: 'bi-person-workspace', type: 'text' },
+                    { id: 'celular', label: 'NÚMERO DE CELULAR', icon: 'bi-telephone-fill', type: 'tel' },
+                    { id: 'fecha', label: 'FECHA', icon: 'bi-calendar-date-fill', type: 'date', hoy: true }
+                ]
+            },
+            /* ===== FIN C2.4: FORMULARIO DE MECÁNICOS ===== */,
+
+            /* ===== INICIO C2.5: FORMULARIO DE TIPO DE EMPLEADOS ===== */
+            {
+                key: 'empleados', menu: 'Empleados', icon: 'bi-person-badge-fill',
+                title: 'FORMULARIO DE TIPO DE EMPLEADOS',
+                label: function (r) { return r.contrato; },
+                fields: [
+                    { id: 'contrato', label: 'TIPO DE CONTRATO', icon: 'bi-file-earmark-text-fill', type: 'text' },
+                    { id: 'monto', label: 'MONTO POR CONTRATO (Bs)', icon: 'bi-cash-stack', type: 'number', format: 'bs' },
+                    { id: 'ingreso', label: 'FECHA DE INGRESO', icon: 'bi-calendar-date-fill', type: 'date', hoy: true },
+                    { id: 'salida', label: 'FECHA DE SALIDA', icon: 'bi-calendar-date-fill', type: 'date', required: false }
+                ]
+            },
+            /* ===== FIN C2.5: FORMULARIO DE TIPO DE EMPLEADOS ===== */
+
+        ];
+        var MOD = {};
+        MODULES.forEach(function (m) { MOD[m.key] = m; });
+        /* ==================== FIN C2: FORMULARIOS DEL PANEL ==================== */
+
+
+        /* ==============================================================
+           INICIO C3: BASE DE DATOS DEL NAVEGADOR
+           Los registros se guardan en este navegador (localStorage).
+           No se comparten entre computadoras.
+           ============================================================== */
+        function loadDB() {
+            try {
+                var raw = localStorage.getItem(DB_KEY);
+                if (raw) return JSON.parse(raw) || {};
+            } catch (e) { /* sin almacenamiento: se trabaja en memoria */ }
+            return {};
+        }
+        var db = loadDB();
+        MODULES.forEach(function (m) { if (!Array.isArray(db[m.key])) db[m.key] = []; });
+        function saveDB() {
+            try { localStorage.setItem(DB_KEY, JSON.stringify(db)); return true; }
+            catch (e) { return false; }
+        }
+        function find(key, id) {
+            for (var i = 0; i < db[key].length; i++) if (db[key][i].id === id) return db[key][i];
+            return null;
+        }
+        /* ==================== FIN C3: BASE DE DATOS DEL NAVEGADOR ==================== */
+
+
+        /* ==============================================================
+           INICIO C4: CAMBIO DE PANTALLAS Y ACCESO
+           ============================================================== */
+        var authMem = false;
+        function isAuth() {
+            try { return sessionStorage.getItem(AUTH_KEY) === '1'; } catch (e) { return authMem; }
+        }
+        function setAuth(v) {
+            authMem = v;
+            try { v ? sessionStorage.setItem(AUTH_KEY, '1') : sessionStorage.removeItem(AUTH_KEY); } catch (e) {}
+        }
+        function showView(name) {
+            if (name === 'panel' && !isAuth()) name = 'login';
+            document.querySelectorAll('.view').forEach(function (v) {
+                v.classList.toggle('d-none', v.id !== 'view-' + name);
+            });
+            window.scrollTo(0, 0);
+            if (name === 'panel') renderPanel(current);
+        }
+        // Cualquier elemento con data-go="pantalla" cambia de pantalla al hacer clic
+        document.addEventListener('click', function (e) {
+            var t = e.target.closest('[data-go]');
+            if (t) { e.preventDefault(); showView(t.getAttribute('data-go')); }
+        });
+        // Cierra el menú del celular al elegir un enlace
+        document.querySelectorAll('#navbarNav .nav-link, #navbarNav [data-go]').forEach(function (a) {
+            a.addEventListener('click', function () {
+                var c = document.getElementById('navbarNav');
+                if (c.classList.contains('show')) bootstrap.Collapse.getOrCreateInstance(c).hide();
+            });
+        });
+
+        // Formulario de acceso del personal
+        $('#form-login').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var u = $('#l-usuario').value.trim(), c = $('#l-clave').value;
+            if (u === AUTH.usuario && c === AUTH.clave) {
+                setAuth(true);
+                $('#login-error').classList.add('d-none');
+                this.reset();
+                showView('panel');
+            } else {
+                $('#login-error').classList.remove('d-none');
+            }
+        });
+        $('#btn-logout').addEventListener('click', function () {
+            setAuth(false);
+            showView('home');
+        });
+        /* ==================== FIN C4: CAMBIO DE PANTALLAS Y ACCESO ==================== */
+
+
+        /* ==============================================================
+           INICIO C5: PANEL (dibuja el formulario, el menú y la tabla)
+           ============================================================== */
+        var current = 'clientes';
+        var msgTimer = null;
+
+        // Menú lateral (computadora) y menú horizontal (celular)
+        function buildMenus() {
+            var html = MODULES.map(function (m) {
+                return '<a href="#" class="btn-menu" data-mod="' + m.key + '"><i class="bi ' + m.icon + '"></i> ' + esc(m.menu) + '</a>';
+            }).join('');
+            $('#menu-desktop').innerHTML = html;
+            $('#menu-mobile').innerHTML = html;
+        }
+        document.addEventListener('click', function (e) {
+            var t = e.target.closest('[data-mod]');
+            if (t) { e.preventDefault(); renderPanel(t.getAttribute('data-mod')); }
+        });
+
+        function getOptions(f) {
+            if (f.from) {
+                return db[f.from].map(function (r) { return { v: r.id, t: MOD[f.from].label(r) }; });
+            }
+            return f.options.map(function (o) { return { v: o, t: o }; });
+        }
+
+        // Dibuja un campo del formulario
+        function fieldHTML(f) {
+            var req = f.required === false ? '' : ' required';
+            var id = 'f_' + f.id, ctrl, hint = '';
+            if (f.type === 'select') {
+                var opts = getOptions(f), inner;
+                if (!opts.length) {
+                    inner = '<option value="">— Sin registros —</option>';
+                    hint = '<div class="form-text text-danger mb-3">Primero registra al menos uno en «' + esc(MOD[f.from].menu) + '».</div>';
+                } else {
+                    inner = '<option value="">Selecciona…</option>' + opts.map(function (o) {
+                        return '<option value="' + esc(o.v) + '"' + (f.defecto === o.v ? ' selected' : '') + '>' + esc(o.t) + '</option>';
+                    }).join('');
+                }
+                ctrl = '<select class="form-select" id="' + id + '" name="' + f.id + '"' + req + '>' + inner + '</select>';
+            } else if (f.type === 'textarea') {
+                ctrl = '<textarea class="form-control" id="' + id + '" name="' + f.id + '" placeholder="' + esc(f.label) + '" style="height:110px"' + req + '></textarea>';
+            } else {
+                var extra = f.type === 'number' ? ' min="0" step="0.01"' : (f.type === 'tel' ? ' pattern="[0-9+ ]{7,15}"' : '');
+                var val = f.hoy ? ' value="' + hoy() + '"' : '';
+                ctrl = '<input type="' + f.type + '" class="form-control" id="' + id + '" name="' + f.id + '" placeholder="' + esc(f.label) + '"' + val + extra + req + (f.readonly ? ' readonly' : '') + '>';
+            }
+            return '<div class="form-floating mb-3">' + ctrl + '<label for="' + id + '"><i class="bi ' + f.icon + ' me-2"></i>' + esc(f.label) + '</label></div>' + hint;
+        }
+
+        // Muestra el formulario elegido en el panel
+        function renderPanel(key) {
+            current = key;
+            var m = MOD[key], form = $('#panel-form');
+            $('#panel-title').textContent = m.title;
+            $('#panel-icon').className = 'bi ' + m.icon;
+            form.classList.remove('was-validated');
+            form.innerHTML = m.fields.map(fieldHTML).join('') +
+                '<button class="btn btn-warning w-100 py-3" type="submit"><i class="bi bi-save-fill me-2"></i>GUARDAR</button>';
+            if (m.setup) m.setup(form);
+            document.querySelectorAll('[data-mod]').forEach(function (a) {
+                a.classList.toggle('active', a.getAttribute('data-mod') === key);
+            });
+            renderRecords();
+        }
+
+        function cellText(f, r) {
+            var v = r[f.id];
+            if (f.type === 'select' && f.from) {
+                var rec = find(f.from, v);
+                return rec ? MOD[f.from].label(rec) : '(eliminado)';
+            }
+            if (f.type === 'date') return fmtFecha(v);
+            if (f.format === 'bs' && v !== '') return 'Bs ' + v;
+            return v;
+        }
+
+        // Tabla de registros guardados (debajo del formulario)
+        function renderRecords() {
+            var m = MOD[current], list = db[m.key], box = $('#panel-records');
+            $('#panel-count').textContent = list.length;
+            if (!list.length) {
+                box.innerHTML = '<p class="text-suave small mb-0">Aún no hay registros.</p>';
+                return;
+            }
+            var head = '<th>#</th>' + m.fields.map(function (f) { return '<th>' + esc(f.label) + '</th>'; }).join('') + '<th></th>';
+            var rows = list.map(function (r, i) {
+                return '<tr><td>' + (i + 1) + '</td>' +
+                    m.fields.map(function (f) { return '<td>' + esc(cellText(f, r)) + '</td>'; }).join('') +
+                    '<td><button type="button" class="btn btn-sm btn-outline-danger py-0" data-del="' + esc(r.id) + '" title="Eliminar"><i class="bi bi-trash"></i></button></td></tr>';
+            }).reverse().join('');
+            box.innerHTML = '<table class="table table-sm table-striped align-middle mb-0"><thead><tr>' + head + '</tr></thead><tbody>' + rows + '</tbody></table>';
+        }
+
+        // Eliminar un registro
+        $('#panel-records').addEventListener('click', function (e) {
+            var b = e.target.closest('[data-del]');
+            if (!b) return;
+            if (!confirm('¿Eliminar este registro?')) return;
+            var id = b.getAttribute('data-del'), list = db[current];
+            for (var i = 0; i < list.length; i++) if (list[i].id === id) { list.splice(i, 1); break; }
+            saveDB();
+            renderPanel(current);
+        });
+
+        function msg(text, type) {
+            var el = $('#panel-msg');
+            el.className = 'alert alert-' + type + ' py-2 small';
+            el.textContent = text;
+            clearTimeout(msgTimer);
+            msgTimer = setTimeout(function () { el.classList.add('d-none'); }, 4000);
+        }
+
+        // Guardar un registro nuevo (botón GUARDAR)
+        $('#panel-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var form = this, m = MOD[current];
+            form.classList.add('was-validated');
+            if (!form.checkValidity()) {
+                msg('Completa los campos obligatorios.', 'danger');
+                return;
+            }
+            var rec = { id: uid() };
+            m.fields.forEach(function (f) { rec[f.id] = form.elements[f.id].value.trim(); });
+            db[m.key].push(rec);
+            if (m.afterSave) m.afterSave(rec);
+            var ok = saveDB();
+            renderPanel(current);
+            msg(ok ? 'Registro guardado correctamente.' : 'Guardado solo temporalmente: el navegador no permite almacenar datos.', ok ? 'success' : 'warning');
+        });
+        /* ==================== FIN C5: PANEL ==================== */
+
+
+        /* ==============================================================
+           INICIO C6: CONSULTA PÚBLICA (nombre + placa)
+           ============================================================== */
+        $('#form-consulta').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var form = this, out = $('#consulta-result');
+            form.classList.add('was-validated');
+            if (!form.checkValidity()) { out.innerHTML = ''; return; }
+
+            var tokens = norm($('#c-nombre').value).split(/\s+/).filter(Boolean);
+            var placa = normPlaca($('#c-placa').value);
+            var vehIds = db.vehiculos.filter(function (v) { return normPlaca(v.placa) === placa; })
+                                     .map(function (v) { return v.id; });
+
+            var found = db.ordenes.map(function (o, i) { return { o: o, i: i }; }).filter(function (x) {
+                if (vehIds.indexOf(x.o.vehiculoId) === -1) return false;
+                var c = find('clientes', x.o.clienteId);
+                if (!c) return false;
+                var full = norm([c.nombre, c.paterno, c.materno].join(' '));
+                return tokens.every(function (t) { return full.indexOf(t) !== -1; });
+            }).sort(function (a, b) {
+                var d = (b.o.fecha || '').localeCompare(a.o.fecha || '');
+                return d !== 0 ? d : b.i - a.i;
+            }).slice(0, 3);
+
+            if (!found.length) {
+                out.innerHTML = '<div class="alert alert-warning small mb-0"><i class="bi bi-exclamation-triangle-fill me-1"></i>No encontramos una orden con esos datos. Revisa tu nombre y la placa, o comunícate con el taller.</div>';
+                return;
+            }
+            out.innerHTML = found.map(function (x) {
+                var o = x.o, v = find('vehiculos', o.vehiculoId), r = find('reparaciones', o.reparacionId);
+                var mecOrden = find('mecanicos', o.mecanicoId);
+
+                // Último diagnóstico registrado para este vehículo
+                var diags = db.diagnosticos.filter(function (d) { return d.vehiculoId === o.vehiculoId; })
+                    .sort(function (a, b) { return (b.fecha || '').localeCompare(a.fecha || ''); });
+                var diag = diags[0] || null;
+                var mecDiag = diag ? find('mecanicos', diag.mecanicoId) : null;
+
+                // Último cambio de estado registrado para esta orden (fecha de reparación)
+                var hist = db.historial.filter(function (h) { return h.ordenId === o.id; })
+                    .sort(function (a, b) { return (b.fecha || '').localeCompare(a.fecha || ''); });
+                var ultimaAct = hist[0] || null;
+
+                return '<div class="resultado">' +
+                    '<div class="etq">Vehículo</div>' +
+                    '<div class="fw-bold">' + esc(v ? v.marca + ' ' + v.modelo + ' · ' + v.placa : '') + '</div>' +
+
+                    '<div class="etq">Diagnóstico</div>' +
+                    '<div>' + esc(diag ? diag.descripcion : 'Aún sin diagnóstico registrado') + '</div>' +
+                    (diag ? '<div class="etq">Diagnosticado por</div><div>' + esc(mecDiag ? MOD.mecanicos.label(mecDiag) : '—') + '</div>' : '') +
+
+                    '<div class="etq">Reparación</div><div>' + esc(r ? r.tipo : '—') + '</div>' +
+                    '<div class="etq">Mecánico a cargo</div><div>' + esc(mecOrden ? MOD.mecanicos.label(mecOrden) : '—') + '</div>' +
+                    '<div class="etq">Monto a pagar</div><div>' + esc(r && r.costo !== '' ? 'Bs ' + r.costo : 'Por definir') + '</div>' +
+
+                    '<div class="etq">Estado actual</div>' +
+                    '<span class="badge text-bg-' + (ESTADO_COLOR[o.estado] || 'secondary') + ' fs-6">' + esc(o.estado) + '</span>' +
+
+                    '<div class="etq">Fecha de ingreso</div><div>' + esc(fmtFecha(o.fecha)) + '</div>' +
+                    '<div class="etq">Fecha de reparación</div><div>' + esc(ultimaAct ? fmtFecha(ultimaAct.fecha) : 'Aún en proceso') + '</div>' +
+                    '</div>';
+            }).join('');
+        });
+        /* ==================== FIN C6: CONSULTA PÚBLICA ==================== */
+
+
+        /* ==============================================================
+           INICIO C7: LOGO
+           Pone tu logo (guardado al final del archivo, bloque C8) en todas
+           las imágenes con class="logo" y también en la pestaña del navegador.
+           ============================================================== */
+        window.addEventListener('DOMContentLoaded', function () {
+            var src = window.RIC_LOGO;
+            if (!src) return;
+            document.querySelectorAll('img.logo').forEach(function (img) { img.src = src; });
+            var fav = document.createElement('link');
+            fav.rel = 'icon'; fav.href = src;
+            document.head.appendChild(fav);
+        });
+        /* ==================== FIN C7: LOGO ==================== */
+
+
+        /* ---------- Altura real del menú (evita que tape el contenido al saltar) ---------- */
+        var navbarEl = document.querySelector('.navbar-custom');
+        function ajustarAlturaMenu() {
+            document.documentElement.style.setProperty('--nav-h', navbarEl.offsetHeight + 'px');
+        }
+        ajustarAlturaMenu();
+        window.addEventListener('resize', ajustarAlturaMenu);
+        if (window.ResizeObserver) { new ResizeObserver(ajustarAlturaMenu).observe(navbarEl); }
+        document.getElementById('navbarNav').addEventListener('shown.bs.collapse', ajustarAlturaMenu);
+        document.getElementById('navbarNav').addEventListener('hidden.bs.collapse', ajustarAlturaMenu);
+
+        /* ---------- Arranque: muestra el sitio público ---------- */
+        buildMenus();
+        showView('home');
+    })();
+    </script>
+
+    <!-- =====================================================================
+         INICIO C8: RUTA DEL LOGO
+         El logo se carga desde la carpeta img (img/logo.webp), que debe
+         estar siempre junto a este archivo HTML. Si cambias el nombre o
+         la ubicación del logo, actualiza la ruta entre las comillas.
+         ===================================================================== -->
+    <script>window.RIC_LOGO = "img/logo.webp";</script>
+    <!-- ===================== FIN C8: RUTA DEL LOGO ===================== -->
+
+</body>
+</html>
